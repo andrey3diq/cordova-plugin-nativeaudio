@@ -32,7 +32,8 @@ import org.json.JSONObject;
 public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFocusChangeListener {
 
     /* options */
-    public static final String OPT_FADE_MUSIC = "fadeMusic";
+	public static final String OPT_FADE_MUSIC = "fadeMusic";
+	public static final String OPT_PLAY_ON_BACKGROUND = "playOnBackground";
 
 	public static final String ERROR_NO_AUDIOID="A reference does not exist for the specified audio id.";
 	public static final String ERROR_AUDIOID_EXISTS="A reference already exists for the specified audio id.";
@@ -53,10 +54,12 @@ public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFo
     private static ArrayList<NativeAudioAsset> resumeList;
     private static HashMap<String, CallbackContext> completeCallbacks;
     private boolean fadeMusic = false;
+    private boolean playOnBackground = false;
 
     public void setOptions(JSONObject options) {
 		if(options != null) {
 			if(options.has(OPT_FADE_MUSIC)) this.fadeMusic = options.optBoolean(OPT_FADE_MUSIC);
+			if(options.has(OPT_PLAY_ON_BACKGROUND)) this.fadeMusic = options.optBoolean(OPT_PLAY_ON_BACKGROUND);
 		}
 	}
 
@@ -305,7 +308,8 @@ public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFo
 
     @Override
     public void onPause(boolean multitasking) {
-        super.onPause(multitasking);
+		super.onPause(multitasking);
+		if(playOnBackground) return;
 
         for (HashMap.Entry<String, NativeAudioAsset> entry : assetMap.entrySet()) {
             NativeAudioAsset asset = entry.getValue();
@@ -318,7 +322,9 @@ public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFo
 
     @Override
     public void onResume(boolean multitasking) {
-        super.onResume(multitasking);
+		super.onResume(multitasking);
+		if(playOnBackground) return;
+
         while (!resumeList.isEmpty()) {
             NativeAudioAsset asset = resumeList.remove(0);
             asset.resume();

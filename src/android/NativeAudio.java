@@ -59,7 +59,7 @@ public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFo
     public void setOptions(JSONObject options) {
 		if(options != null) {
 			if(options.has(OPT_FADE_MUSIC)) this.fadeMusic = options.optBoolean(OPT_FADE_MUSIC);
-			if(options.has(OPT_PLAY_ON_BACKGROUND)) this.fadeMusic = options.optBoolean(OPT_PLAY_ON_BACKGROUND);
+			if(options.has(OPT_PLAY_ON_BACKGROUND)) this.playOnBackground = options.optBoolean(OPT_PLAY_ON_BACKGROUND);
 		}
 	}
 

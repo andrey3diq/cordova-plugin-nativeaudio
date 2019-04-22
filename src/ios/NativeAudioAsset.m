@@ -143,7 +143,6 @@ static const CGFloat FADE_DELAY = 0.08;
     [player play];
     playIndex += 1;
     playIndex = playIndex % [voices count];
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
 
 - (void) unload 

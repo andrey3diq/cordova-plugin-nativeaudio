@@ -19,6 +19,7 @@
 
 #define OPT_FADE_MUSIC  @"fadeMusic"
 #define OPT_SONG_INFO  @"songInfo"
+#define OPT_SONG_INFO_VISIBLE @"songInfoVisible"
 
 @property (assign) BOOL fadeMusic;
 

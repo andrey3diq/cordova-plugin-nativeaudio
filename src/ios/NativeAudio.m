@@ -53,6 +53,13 @@ NSString* INFO_VOLUME_CHANGED = @"(NATIVE AUDIO) Volume changed.";
     str = [options objectForKey:OPT_FADE_MUSIC];
     if(str) self.fadeMusic = [str boolValue];
     
+    NSNumber* songInfoVisible = nil;
+    songInfoVisible = [options objectForKey:OPT_SONG_INFO_VISIBLE];
+    if(songInfoVisible) {
+        if([songInfoVisible boolValue]) [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        else [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
+    }
+    
     NSDictionary* songInfo = nil;
     songInfo = [options objectForKey:OPT_SONG_INFO];
     if(songInfo) {

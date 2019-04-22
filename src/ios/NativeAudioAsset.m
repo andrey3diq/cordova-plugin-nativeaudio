@@ -7,6 +7,8 @@
 //
 
 #import "NativeAudioAsset.h"
+#import "MediaPlayer/MediaPlayer.h"
+#import <AVFoundation/AVFoundation.h>
 
 @implementation NativeAudioAsset
 
@@ -22,6 +24,20 @@ static const CGFloat FADE_DELAY = 0.08;
         NSURL *pathURL = [NSURL fileURLWithPath : path];
         
         for (int x = 0; x < [numVoices intValue]; x++) {
+            AVAudioSession* session = [AVAudioSession
+                                       sharedInstance];
+            
+            // Don't activate the audio session yet
+            [session setActive:NO error:NULL];
+            
+            // Play music even in background and dont stop playing music
+            // even another app starts playing sound
+            [session setCategory:AVAudioSessionCategoryPlayback
+                           error:NULL];
+            
+            // Active the audio session
+            [session setActive:YES error:NULL];
+            
             AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:pathURL error: NULL];
             player.volume = volume.floatValue;
             [player prepareToPlay];
@@ -127,6 +143,21 @@ static const CGFloat FADE_DELAY = 0.08;
     [player play];
     playIndex += 1;
     playIndex = playIndex % [voices count];
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    //[self becomeFirstResponder];
+    MPNowPlayingInfoCenter *playingInfoCenter = [MPNowPlayingInfoCenter defaultCenter];
+    NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+    //MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:[UIImage imageNamed:@"image"]];
+    
+    [songInfo setObject:@"your song" forKey:MPMediaItemPropertyTitle];
+    [songInfo setObject:@"your artist" forKey:MPMediaItemPropertyArtist];
+    [songInfo setObject:@"your album" forKey:MPMediaItemPropertyAlbumTitle];
+    [songInfo setObject:[NSNumber numberWithDouble:.5] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+    [songInfo setObject:[NSNumber numberWithDouble:1.0] forKey:MPMediaItemPropertyPlaybackDuration];
+    [songInfo setObject:[NSNumber numberWithDouble:(false ? 0.0f : 1.0f)] forKey:MPNowPlayingInfoPropertyPlaybackRate];
+    //[songInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
+    
+    [playingInfoCenter setNowPlayingInfo:songInfo];
 }
 
 - (void) unload 

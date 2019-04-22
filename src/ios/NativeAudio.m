@@ -8,6 +8,7 @@
 
 #import "NativeAudio.h"
 #import <AVFoundation/AVFoundation.h>
+#import "MediaPlayer/MediaPlayer.h"
 
 @implementation NativeAudio
 
@@ -51,6 +52,18 @@ NSString* INFO_VOLUME_CHANGED = @"(NATIVE AUDIO) Volume changed.";
 
     str = [options objectForKey:OPT_FADE_MUSIC];
     if(str) self.fadeMusic = [str boolValue];
+    
+    NSDictionary* songInfo = nil;
+    songInfo = [options objectForKey:OPT_SONG_INFO];
+    if(songInfo) {
+        NSString* name = nil;
+        NSString* artist = nil;
+        NSString* album = nil;
+        name = [songInfo objectForKey:@"name"];
+        artist = [songInfo objectForKey:@"artist"];
+        album = [songInfo objectForKey:@"album"];
+        [self setSongInfoWithName:name withArtist:artist withAlbum:album];
+    }
 }
 
 - (void) setOptions:(CDVInvokedUrlCommand *)command {
@@ -60,6 +73,21 @@ NSString* INFO_VOLUME_CHANGED = @"(NATIVE AUDIO) Volume changed.";
     }
 
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
+}
+
+- (void) setSongInfoWithName: (NSString *) song withArtist: (NSString *) artist withAlbum: (NSString *) album
+{
+    MPNowPlayingInfoCenter *playingInfoCenter = [MPNowPlayingInfoCenter defaultCenter];
+    NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+    
+    [songInfo setObject:song forKey:MPMediaItemPropertyTitle];
+    [songInfo setObject:artist forKey:MPMediaItemPropertyArtist];
+    [songInfo setObject:album forKey:MPMediaItemPropertyAlbumTitle];
+    [songInfo setObject:[NSNumber numberWithDouble:.5] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+    [songInfo setObject:[NSNumber numberWithDouble:1.0] forKey:MPMediaItemPropertyPlaybackDuration];
+    [songInfo setObject:[NSNumber numberWithDouble:(false ? 0.0f : 1.0f)] forKey:MPNowPlayingInfoPropertyPlaybackRate];
+    
+    [playingInfoCenter setNowPlayingInfo:songInfo];
 }
 
 - (void) preloadSimple:(CDVInvokedUrlCommand *)command

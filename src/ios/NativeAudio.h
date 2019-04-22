@@ -18,10 +18,12 @@
 }
 
 #define OPT_FADE_MUSIC  @"fadeMusic"
+#define OPT_SONG_INFO  @"songInfo"
 
 @property (assign) BOOL fadeMusic;
 
 - (void) setOptions:(CDVInvokedUrlCommand *)command;
+- (void) setSongInfoWithName: (NSString *) song withArtist: (NSString *) artist withAlbum: (NSString *) album;
 - (void) preloadSimple:(CDVInvokedUrlCommand *)command;
 - (void) preloadComplex:(CDVInvokedUrlCommand *)command;
 - (void) play:(CDVInvokedUrlCommand *)command;
